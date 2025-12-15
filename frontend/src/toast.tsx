@@ -1,21 +1,6 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
-
-type ToastKind = "success" | "error" | "info";
-
-type Toast = {
-  id: string;
-  kind: ToastKind;
-  title: string;
-  message?: string;
-  ttlMs?: number;
-};
-
-type ToastCtx = {
-  push: (t: Omit<Toast, "id">) => void;
-  remove: (id: string) => void;
-};
-
-const Ctx = createContext<ToastCtx | null>(null);
+import React, { useCallback, useMemo, useState } from "react";
+import { ToastContext } from "./toastStore";
+import type { Toast, ToastKind, ToastCtx } from "./toastStore";
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -34,29 +19,25 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     [remove]
   );
 
-  const value = useMemo(() => ({ push, remove }), [push, remove]);
+  const value = useMemo<ToastCtx>(() => ({ push, remove }), [push, remove]);
 
   return (
-    <Ctx.Provider value={value}>
+    <ToastContext.Provider value={value}>
       {children}
       <div style={wrapStyle}>
         {toasts.map((t) => (
           <div key={t.id} style={{ ...toastStyle, ...kindStyle[t.kind] }}>
             <div style={{ fontWeight: 800, fontSize: 13 }}>{t.title}</div>
             {t.message ? (
-              <div style={{ opacity: 0.9, marginTop: 4, fontSize: 13 }}>{t.message}</div>
+              <div style={{ opacity: 0.9, marginTop: 4, fontSize: 13 }}>
+                {t.message}
+              </div>
             ) : null}
           </div>
         ))}
       </div>
-    </Ctx.Provider>
+    </ToastContext.Provider>
   );
-}
-
-export function useToast() {
-  const ctx = useContext(Ctx);
-  if (!ctx) throw new Error("useToast must be used within ToastProvider");
-  return ctx;
 }
 
 const wrapStyle: React.CSSProperties = {

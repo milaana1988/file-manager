@@ -34,10 +34,12 @@ export function usePrefs(uid?: string) {
 
   useEffect(() => {
     if (!uid) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPrefs(DEFAULT_PREFS);
       return;
     }
     const saved = safeParse(localStorage.getItem(key));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPrefs(saved ? { ...DEFAULT_PREFS, ...saved } : DEFAULT_PREFS);
   }, [uid, key]);
 

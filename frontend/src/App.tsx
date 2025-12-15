@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePrefs } from "./usePrefs";
-import { useToast } from "./toast";
+import { useToast } from "./toastStore";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
 import {
@@ -68,7 +68,9 @@ export default function App() {
   const setQ = (v: string) => setPrefs((p) => ({ ...p, q: v }));
   const setContentQ = (v: string) => setPrefs((p) => ({ ...p, contentQ: v }));
 
-  const [contentRes, setContentRes] = useState<ContentSearchResponse | null>(null);
+  const [contentRes, setContentRes] = useState<ContentSearchResponse | null>(
+    null
+  );
   const [deleteTarget, setDeleteTarget] = useState<FileItem | null>(null);
 
   const [busy, setBusy] = useState<boolean>(false);
@@ -133,9 +135,17 @@ export default function App() {
     setBusy(true);
     try {
       const scope = view === "all" ? "all" : "mine";
-      const res = await searchContent(user.token, { q: qq, scope, max_results: 25 });
+      const res = await searchContent(user.token, {
+        q: qq,
+        scope,
+        max_results: 25,
+      });
       setContentRes(res);
-      toast.push({ kind: "info", title: "Search finished", message: `${res.items.length} file(s) matched` });
+      toast.push({
+        kind: "info",
+        title: "Search finished",
+        message: `${res.items.length} file(s) matched`,
+      });
     } catch (e: unknown) {
       const msg = getErrorMessage(e);
       setErr(msg);
@@ -226,7 +236,11 @@ export default function App() {
     setBusy(true);
     try {
       await uploadFiles(user.token, arr);
-      toast.push({ kind: "success", title: "Upload complete", message: `${arr.length} file(s)` });
+      toast.push({
+        kind: "success",
+        title: "Upload complete",
+        message: `${arr.length} file(s)`,
+      });
       // after upload, refresh current view (mine or all)
       await refresh(view);
     } catch (e: unknown) {
@@ -459,10 +473,16 @@ export default function App() {
                 <div className="cardSub">
                   Query: <span className="mono">{contentRes.q}</span>
                   {contentRes.truncated_files > 0 && (
-                    <span className="mono"> • truncated: {contentRes.truncated_files}</span>
+                    <span className="mono">
+                      {" "}
+                      • truncated: {contentRes.truncated_files}
+                    </span>
                   )}
                   {contentRes.skipped_pdf > 0 && (
-                    <span className="mono"> • skipped PDFs: {contentRes.skipped_pdf}</span>
+                    <span className="mono">
+                      {" "}
+                      • skipped PDFs: {contentRes.skipped_pdf}
+                    </span>
                   )}
                 </div>
               </div>
@@ -477,27 +497,51 @@ export default function App() {
                 {contentRes.items.map((hit) => {
                   const f = hit.file;
                   return (
-                    <div key={f.id} style={{ padding: 12, borderTop: "1px solid var(--border)" }}>
-                      <div style={{ display: "flex", gap: 10, alignItems: "center", justifyContent: "space-between" }}>
+                    <div
+                      key={f.id}
+                      style={{
+                        padding: 12,
+                        borderTop: "1px solid var(--border)",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 10,
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
                         <div>
                           <div style={{ fontWeight: 700 }}>{f.name}</div>
                           <div className="mono" style={{ opacity: 0.85 }}>
                             {f.type} • {fmtBytes(f.size)}
                           </div>
                         </div>
-                        <button className="btn btnGhost" onClick={() => onDownload(f)} disabled={busy}>
+                        <button
+                          className="btn btnGhost"
+                          onClick={() => onDownload(f)}
+                          disabled={busy}
+                        >
                           Download
                         </button>
                       </div>
 
                       <div style={{ marginTop: 10 }}>
                         {hit.matches.slice(0, 10).map((m) => (
-                          <div key={m.line} className="mono" style={{ opacity: 0.9, marginTop: 6 }}>
+                          <div
+                            key={m.line}
+                            className="mono"
+                            style={{ opacity: 0.9, marginTop: 6 }}
+                          >
                             {m.line}: {m.text}
                           </div>
                         ))}
                         {hit.matches.length > 10 && (
-                          <div className="mono" style={{ marginTop: 8, opacity: 0.7 }}>
+                          <div
+                            className="mono"
+                            style={{ marginTop: 8, opacity: 0.7 }}
+                          >
                             +{hit.matches.length - 10} more matches…
                           </div>
                         )}
