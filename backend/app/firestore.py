@@ -1,7 +1,19 @@
 from google.cloud import firestore
-from datetime import datetime, timezone
+from functools import lru_cache
 
-db = firestore.Client()
+
+@lru_cache
+def _client():
+    return firestore.Client()
+
+
+class _DBProxy:
+    @property
+    def db(self):
+        return _client()
+
+
+db = _DBProxy()
 
 
 def create_file_doc(data: dict) -> str:
