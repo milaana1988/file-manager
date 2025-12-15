@@ -26,8 +26,11 @@ Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        # local dev
         "http://localhost:5174",
         "http://127.0.0.1:5174",
+
+        # Firebase Hosting (PROD)
         "https://file-management-e1e8c.web.app",
         "https://file-management-e1e8c.firebaseapp.com",
     ],
