@@ -212,7 +212,8 @@ def search_content(
             continue
 
         # download capped bytes and scan
-        raw = storage.download_bytes(settings.gcs_bucket, meta["gcs_object"], max_bytes=1_000_000)
+        raw = storage.download_bytes(
+            settings.gcs_bucket, meta["gcs_object"], max_bytes=1_000_000)
         if len(raw) > 1_000_000:
             truncated_files += 1
             raw = raw[:1_000_000]
@@ -225,7 +226,8 @@ def search_content(
         except Exception:
             continue
 
-        matches = _find_line_matches(text, qq, max_matches=max_matches_per_file)
+        matches = _find_line_matches(
+            text, qq, max_matches=max_matches_per_file)
         if matches:
             out.append({"file": meta, "matches": matches})
             if len(out) >= max_results:
