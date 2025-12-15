@@ -9,6 +9,12 @@ jobs:
   backend:
     name: Backend (pytest)
     runs-on: ubuntu-latest
+
+    env:
+      GCP_PROJECT_ID: dummy-project
+      GCS_BUCKET: dummy-bucket
+      FIREBASE_PROJECT_ID: dummy-firebase
+
     defaults:
       run:
         working-directory: backend
