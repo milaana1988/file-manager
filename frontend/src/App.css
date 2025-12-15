@@ -1,0 +1,506 @@
+:root {
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e5e7eb;
+  --shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
+
+  --radius: 16px;
+  --radius-sm: 12px;
+
+  --btn: #0f172a;
+  --btnText: #ffffff;
+  --danger: #b42318;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ✅ Hard centering for the whole app (fixes Vite/#root flex defaults) */
+html,
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+  /* Center the app even if some global styles set body/root to flex */
+  display: flex;
+  justify-content: center;
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 24px 16px 40px;
+  width: 100%;
+}
+
+.container {
+  max-width: 1040px;
+  width: 100%;
+  margin: 0 auto; /* centered */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Header */
+.header {
+  background: transparent;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand .h1 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.userbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.useremail {
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Panels/cards */
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.panelTop {
+  padding: 14px;
+}
+
+/* Inputs */
+.input {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  outline: none;
+  font-size: 14px;
+  background: #fff;
+}
+
+.input:focus {
+  border-color: #cbd5e1;
+  box-shadow: 0 0 0 3px rgba(2, 6, 23, 0.06);
+}
+
+.select {
+  width: 100%;
+  padding: 10px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 14px;
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--btn);
+  background: var(--btn);
+  color: var(--btnText);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btnGhost {
+  background: #fff;
+  color: var(--btn);
+}
+
+.btnDanger {
+  border-color: var(--danger);
+  background: var(--danger);
+  color: #fff;
+}
+
+/* Top controls layout */
+.searchRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.searchWrap {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.segmented {
+  display: inline-flex;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.segBtn {
+  border: 0;
+  background: transparent;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.segActive {
+  background: var(--btn);
+  color: #fff;
+}
+
+.filtersRow {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 140px 140px 160px auto 1fr;
+  gap: 10px;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.upload {
+  margin-bottom: 10px;
+}
+
+.upload input {
+  display: none;
+}
+
+.meta {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pill {
+  font-size: 12px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 7px 10px;
+  border-radius: 999px;
+}
+
+.pillInfo {
+  color: #334155;
+}
+
+/* Alerts */
+.alert {
+  margin-top: 12px;
+  border: 1px solid #fecaca;
+  background: #fff1f2;
+  color: #9f1239;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+/* Empty state */
+.emptyState {
+  padding: 18px 14px;
+}
+
+.emptyTitle {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.emptyText {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Table card */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.tableWrap {
+  width: 100%;
+  overflow-x: auto; /* responsive */
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px; /* allows horizontal scroll on small screens */
+}
+
+th,
+td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 13px;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+  color: #334155;
+  font-weight: 700;
+}
+
+.thRight {
+  text-align: right;
+}
+
+.tdMono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: #334155;
+}
+
+.tdName {
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tdActions {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.tdEmpty {
+  text-align: center;
+  color: var(--muted);
+  padding: 22px 14px;
+}
+
+/* Text search results */
+.cardTop {
+  padding: 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cardTitle {
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.cardSub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 6px 0 0;
+}
+
+.dot {
+  opacity: 0.6;
+}
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  .filtersRow {
+    grid-template-columns: 1fr 1fr;
+  }
+  .meta {
+    justify-content: flex-start;
+  }
+  .useremail {
+    max-width: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchRow {
+    grid-template-columns: 1fr;
+  }
+
+  .searchWrap {
+    grid-template-columns: 1fr;
+  }
+
+  .segmented {
+    justify-content: flex-start;
+    width: fit-content;
+  }
+}
+
+.loaderOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(246, 247, 251, 0.75);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loaderCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.15);
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #0f172a;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+.loaderText {
+  font-size: 13px;
+  color: #334155;
+  letter-spacing: 0.02em;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 9998;
+}
+
+.modalCard {
+  width: 100%;
+  max-width: 460px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+
+.modalTitle {
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.modalBody {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.modalActions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

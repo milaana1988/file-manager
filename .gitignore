@@ -1,0 +1,51 @@
+# =====================
+# Python / Backend
+# =====================
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# =====================
+# Node / Frontend
+# =====================
+node_modules/
+.vite/
+.eslintcache
+
+# =====================
+# Firebase / GCP
+# =====================
+.firebase/
+.firebase-debug.log
+
+# =====================
+# Logs
+# =====================
+*.log
+
+# =====================
+# OS / IDE
+# =====================
+.DS_Store
+.idea/
+.vscode/
+*.swp
