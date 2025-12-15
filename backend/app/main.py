@@ -28,9 +28,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5174",
         "http://127.0.0.1:5174",
-        # later (when deployed), add your Firebase Hosting domain:
-        # "https://YOUR_PROJECT_ID.web.app",
-        # "https://YOUR_PROJECT_ID.firebaseapp.com",
+        "https://file-management-e1e8c.web.app/",
+        "https://file-management-e1e8c.firebaseapp.com/",
     ],
     allow_credentials=False,
     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
