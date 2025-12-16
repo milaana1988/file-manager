@@ -8,12 +8,12 @@ from fastapi import Depends, FastAPI, File, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from app.utils import _content_disposition
+from app.utils import _content_disposition, _find_line_matches, _is_probably_text
 from .settings import settings
 from .auth import get_user
 from . import storage as gcs
-from . import firestore as fs
 
+from app.firestore import FilesRepo, get_client
 from prometheus_fastapi_instrumentator import Instrumentator
 
 # =========================
@@ -27,25 +27,25 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         # local dev
-        "http://localhost:5174",
         "http://127.0.0.1:5174",
-
+        "http://localhost:5174",
         # Firebase Hosting (PROD)
         "https://file-management-e1e8c.web.app",
         "https://file-management-e1e8c.firebaseapp.com",
     ],
     allow_credentials=False,
     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_headers=["*"],
 )
-
 
 # =========================
 # Dependency providers
 # =========================
-def get_db():
-    # Firestore access layer (module)
-    return fs
+
+
+def get_db() -> FilesRepo:
+    # Firestore repository wrapper
+    return FilesRepo(get_client())
 
 
 def get_storage():
@@ -83,7 +83,7 @@ def healthz():
 async def upload_files(
     files: list[UploadFile] = File(...),
     user: User = Depends(get_current_user),
-    db=Depends(get_db),
+    db: FilesRepo = Depends(get_db),
     storage=Depends(get_storage),
 ):
     uid = user.uid
@@ -126,11 +126,12 @@ def list_files(
     ftype: str | None = None,  # json|txt|pdf
     q: str | None = None,      # name search
     user: User = Depends(get_current_user),
-    db=Depends(get_db),
+    db: FilesRepo = Depends(get_db),
 ):
     uid = user.uid
 
-    col = db.db.collection("files").where("uid", "==", uid)
+    col = db.query_files().where("uid", "==", uid)
+
     if ftype:
         col = col.where("type", "==", ftype.lower())
 
@@ -149,22 +150,6 @@ def list_files(
     return {"items": docs}
 
 
-def _is_probably_text(b: bytes) -> bool:
-    # quick binary check (helps avoid scanning random bytes)
-    return b"\x00" not in b
-
-
-def _find_line_matches(text: str, needle: str, *, max_matches: int = 20) -> list[dict[str, Any]]:
-    out: list[dict[str, Any]] = []
-    n = needle.lower()
-    for i, line in enumerate(text.splitlines(), start=1):
-        if n in line.lower():
-            out.append({"line": i, "text": line[:400]})
-            if len(out) >= max_matches:
-                break
-    return out
-
-
 @app.get("/api/files/search-content", response_model=ContentSearchResponse)
 def search_content(
     q: str,
@@ -172,7 +157,7 @@ def search_content(
     max_results: int = 25,
     max_matches_per_file: int = 20,
     user: User = Depends(get_current_user),
-    db=Depends(get_db),
+    db: FilesRepo = Depends(get_db),
     storage=Depends(get_storage),
 ):
     """Search by text within files.
@@ -193,9 +178,9 @@ def search_content(
 
     # Pull candidate docs from Firestore
     if scope == "all":
-        col = db.db.collection("files")
+        col = db.query_files()
     else:
-        col = db.db.collection("files").where("uid", "==", user.uid)
+        col = db.query_files().where("uid", "==", user.uid)
 
     docs = [d.to_dict() | {"id": d.id} for d in col.stream()]
 
@@ -203,7 +188,6 @@ def search_content(
     skipped_pdf = 0
     truncated_files = 0
 
-    # small optimization: check name_lower first (still do content scan)
     # keep deterministic order (newest first)
     docs.sort(key=lambda x: x.get("created_at", ""), reverse=True)
 
@@ -213,7 +197,6 @@ def search_content(
             skipped_pdf += 1
             continue
 
-        # download capped bytes and scan
         raw = storage.download_bytes(
             settings.gcs_bucket, meta["gcs_object"], max_bytes=1_000_000)
         if len(raw) > 1_000_000:
@@ -235,14 +218,19 @@ def search_content(
             if len(out) >= max_results:
                 break
 
-    return {"q": qq, "items": out, "skipped_pdf": skipped_pdf, "truncated_files": truncated_files}
+    return {
+        "q": qq,
+        "items": out,
+        "skipped_pdf": skipped_pdf,
+        "truncated_files": truncated_files,
+    }
 
 
 @app.get("/api/files/{file_id}/download")
 def download(
     file_id: str,
     user: User = Depends(get_current_user),
-    db=Depends(get_db),
+    db: FilesRepo = Depends(get_db),
     storage=Depends(get_storage),
 ):
     meta = db.get_file(file_id)
@@ -270,7 +258,7 @@ def download(
 def delete(
     file_id: str,
     user: User = Depends(get_current_user),
-    db=Depends(get_db),
+    db: FilesRepo = Depends(get_db),
     storage=Depends(get_storage),
 ):
     meta = db.get_file(file_id)
@@ -289,11 +277,10 @@ def delete(
 @app.get("/api/admin/files", response_model=FilesResponse)
 def admin_list(
     user: User = Depends(get_current_user),
-    db=Depends(get_db),
+    db: FilesRepo = Depends(get_db),
 ):
     if not user.is_admin:
         raise HTTPException(status_code=403, detail="Admin only")
 
-    docs = [d.to_dict() | {"id": d.id}
-            for d in db.db.collection("files").stream()]
+    docs = [d.to_dict() | {"id": d.id} for d in db.query_files().stream()]
     return {"items": docs}
