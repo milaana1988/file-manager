@@ -66,7 +66,7 @@ class FakeDB:
         return self._files.pop(file_id, None) is not None
 
     def query_files(self):
-        return self.collection("files")
+        return self.db.collection("files")
 
 
 class FakeStorage:
