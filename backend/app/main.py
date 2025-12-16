@@ -74,8 +74,8 @@ def get_current_user(
 # =========================
 # Routes
 # =========================
-@app.get("/healthz")
-def healthz():
+@app.get("/health")
+def health():
     return {"ok": True}
 
 
