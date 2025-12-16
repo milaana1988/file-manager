@@ -65,6 +65,9 @@ class FakeDB:
     def delete_file_doc(self, file_id: str) -> bool:
         return self._files.pop(file_id, None) is not None
 
+    def query_files(self):
+        return self.collection("files")
+
 
 class FakeStorage:
     def __init__(self):
