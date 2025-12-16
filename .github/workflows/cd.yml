@@ -39,7 +39,8 @@ jobs:
             GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             GCS_BUCKET=${{ secrets.GCS_BUCKET }}
             FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
-
+            ADMIN_EMAILS=${{ secrets.ADMIN_EMAILS }}
+            
   deploy_frontend_firebase:
     name: Deploy frontend to Firebase Hosting
     runs-on: ubuntu-latest
