@@ -14,6 +14,9 @@ The repository is intentionally designed to be:
 
 ---
 
+
+![alt text](image.png)
+
 ## Features
 
 - ✅ Google Sign‑In via **Firebase Auth**
