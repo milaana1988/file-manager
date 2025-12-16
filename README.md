@@ -260,6 +260,41 @@ Backend exposes metrics at `/metrics`.
 
 ---
 
+## Testing
+
+The backend includes **unit tests** covering core functionality and edge cases.
+
+- Tests are written using **pytest**
+- Firebase, Firestore, and GCS integrations are mocked for deterministic testing
+- Auth, permissions, and error scenarios are explicitly tested
+
+### Run tests locally
+
+```bash
+cd backend
+pytest
+```
+
+Tests are designed to run **without real cloud dependencies**.
+
+---
+
+## CI / CD Pipeline
+
+This repository includes a **CI/CD pipeline** that automatically validates code quality on every push and pull request.
+
+The pipeline performs:
+- ✅ Backend unit tests
+- ✅ Linting and formatting checks
+- ✅ Build validation for backend and frontend Docker images
+
+This ensures:
+- code changes do not break existing functionality
+- the application remains deployable at all times
+- consistent quality standards across the project
+
+---
+
 ## Sequence Diagrams (Conceptual)
 Below is the textual description of the three key flows reviewers typically look for.
 
