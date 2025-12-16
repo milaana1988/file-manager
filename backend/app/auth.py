@@ -10,8 +10,6 @@ def init_firebase():
     global _app
     if _app:
         return
-    # На Cloud Run лучше использовать ADC (service account), но для локалки можно ключом.
-    # Самый простой путь: GOOGLE_APPLICATION_CREDENTIALS указывает на json ключ.
     firebase_admin.initialize_app()
     _app = True
 
@@ -31,7 +29,6 @@ def get_user(authorization: str | None):
     email = decoded.get("email", "")
     claims = decoded.get("admin", False)
 
-    # Быстрый вариант админа через env allow-list (можно убрать, когда настроишь custom claims)
     allow = {e.strip().lower()
              for e in settings.admin_emails.split(",") if e.strip()}
     is_admin = bool(claims) or (email.lower() in allow)
